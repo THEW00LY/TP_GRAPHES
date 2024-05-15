@@ -13,27 +13,32 @@ import org.insa.graphs.model.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
-    public DijkstraAlgorithm(ShortestPathData data) { 
-        super(data);
+    public boolean isMarque(Label tas, Node node) {
+        //vérifier si le cost est infini
+        if (tas.cost == Double.POSITIVE_INFINITY) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
-
-    public boolean isMarque() {
-        return this.marque;
+    public void setMarque(Label tas) {
+        tas.marque = true;
     }
-
-    public void setMarque(boolean marque) {
-        this.marque = marque;
-    }
-
+        
     @Override
-    protected ShortestPathSolution doRun() {
+    protected ShortestPathSolution doRun() { 
         final ShortestPathData data = getInputData();
         ShortestPathSolution solution = null;
         ArrayList<Node> tas = new ArrayList<Node>();
-
+        ArrayList<Label> listeLabel = new ArrayList<Label>();
         Graph graph = data.getGraph();
         Node origin = data.getOrigin();
+        graph.getNodes().forEach(node -> listeLabel.add(new Label(node)));
+
+
+
 
         // Initialize array of distances.
         double[] distances = new double[graph.size()];
@@ -45,76 +50,53 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Arrays.fill(predecessorArcs, null);
 
         // Initialize the binary heap
-        BinaryHeap<Node> heap = new BinaryHeap<Node>();
+        BinaryHeap<Label> heap = new BinaryHeap<Label>();
         tas.add(origin);
-        heap.insert(origin);
-        origin.setMarque(true);
-
-        notifyOriginProcessed(origin);
-
+        listeLabel.get(origin.getId()).cost = 0;
+        heap.insert(listeLabel.get(origin.getId()));
 
         while (!heap.isEmpty()) {
-            Node node = heap.deleteMin();
-            node.setMarque(false);
-            notifyNodeMarked(node);
 
-            for (Arc arc : node.getSuccessors()) {
-                Node successor = arc.getDestination();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /*             Label x = heap.deleteMin();
+            setMarque(x);
+            for (Arc arc : x.sommet_courant.getSuccessors()) {
+                Node y = arc.getDestination();
                 if (!data.isAllowed(arc)) {
                     continue;
                 }
-
-                double oldDistance = distances[successor.getId()];
-                double newDistance = distances[node.getId()] + data.getCost(arc);
-
-                if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
-                    notifyNodeReached(successor);
-                    tas.add(successor);
-                }
-
-                if (newDistance < oldDistance) {
-                    distances[successor.getId()] = newDistance;
-                    predecessorArcs[successor.getId()] = arc;
-
-                    if (tas.contains(successor)) {
-                        tas.remove(successor);
-                    }
-
-                    if (!successor.isMarque()) {
-                        heap.insert(successor);
-                        tas.add(successor);
-                        successor.setMarque(true);
-                    } else {
-                        heap.remove(successor);
-                        heap.insert(successor);
+                if (!isMarque(listeLabel.get(y.getId()), y)) {
+                    double oldDistance = listeLabel.get(y.getId()).cost;
+                    double newDistance = listeLabel.get(x.sommet_courant.getId()).cost + data.getCost(arc);
+                    if (newDistance < oldDistance) {
+                        listeLabel.get(y.getId()).cost = newDistance;
+                        tas.add(y);
+                        heap.insert(listeLabel.get(y.getId()));
+                        predecessorArcs[y.getId()] = arc;
                     }
                 }
-            }
+            } */
         }
-
-
-        // Destination has no predecessor, the solution is infeasible...
-        if (predecessorArcs[data.getDestination().getId()] == null) {
-            solution = new ShortestPathSolution(data, Status.INFEASIBLE);
-        } else {
-            // The destination has been found, notify the observers.
-            notifyDestinationReached(data.getDestination());
-
-            // Create the path from the array of predecessors...
-            ArrayList<Arc> arcs = new ArrayList<>();
-            Arc arc = predecessorArcs[data.getDestination().getId()];
-            while (arc != null) {
-                arcs.add(arc);
-                arc = predecessorArcs[arc.getOrigin().getId()];
-            }
-
-            // Reverse the path...
-            Collections.reverse(arcs);
-
-            // Create the final solution.
-            solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
-        }
-
 
         return solution;
     }

@@ -15,6 +15,10 @@ public class Label implements Comparable<Label> {
         this.father = null;
     }
 
+
+
+
+
     public double getCost() {
         return this.cost;
     }
@@ -23,4 +27,5 @@ public class Label implements Comparable<Label> {
     public int compareTo(Label other) {
         return Double.compare(this.cost, other.cost);
     }
+
 }
