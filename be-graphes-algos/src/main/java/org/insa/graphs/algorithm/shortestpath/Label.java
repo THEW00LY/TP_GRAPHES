@@ -15,10 +15,6 @@ public class Label implements Comparable<Label> {
         this.father = null;
     }
 
-
-
-
-
     public double getCost() {
         return this.cost;
     }

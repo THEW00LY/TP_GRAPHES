@@ -57,28 +57,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
         while (!heap.isEmpty()) {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            /*             Label x = heap.deleteMin();
+            Label x = heap.deleteMin();
             setMarque(x);
             for (Arc arc : x.sommet_courant.getSuccessors()) {
                 Node y = arc.getDestination();
@@ -95,7 +74,23 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                         predecessorArcs[y.getId()] = arc;
                     }
                 }
-            } */
+            } 
+            // return solution (the shortest path)
+        }
+            // Reconstruct the path from the predecessor array
+        if (listeLabel.get(destination.getId()).cost != Double.POSITIVE_INFINITY) {
+            ArrayList<Arc> arcs = new ArrayList<>();
+            Node currentNode = destination;
+            while (currentNode != origin) {
+                Arc arc = listeLabel.get(currentNode.getId()).predecessor;
+                arcs.add(arc);
+                currentNode = arc.getOrigin();
+            }
+            Collections.reverse(arcs);
+            Path path = new Path(graph, arcs);
+            solution = new ShortestPathSolution(data, Status.OPTIMAL, path);
+        } else {
+            solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);
         }
 
         return solution;
