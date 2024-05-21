@@ -23,6 +23,9 @@ public class Label implements Comparable<Label> {
     public Node getSommet() {
         return sommet_courant;
     }
+    public double getTotalCost() {
+        return this.cost;
+    }
 
     public boolean isMarque() {
         return this.marque;
@@ -42,7 +45,7 @@ public class Label implements Comparable<Label> {
 
     @Override
     public int compareTo(Label other) {
-        return Double.compare(this.cost, other.cost);
+        return Double.compare(getTotalCost(), other.cost);
     }
 
 }
