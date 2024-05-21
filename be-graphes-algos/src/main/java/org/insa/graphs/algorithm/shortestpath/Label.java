@@ -1,5 +1,6 @@
 package org.insa.graphs.algorithm.shortestpath;
 
+import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Node;
 
 public class Label implements Comparable<Label> {
@@ -17,6 +18,26 @@ public class Label implements Comparable<Label> {
 
     public double getCost() {
         return this.cost;
+    }
+
+    public Node getSommet() {
+        return sommet_courant;
+    }
+
+    public boolean isMarque() {
+        return marque;
+    }
+
+    public Node getfather() {
+        return father;
+    }
+
+    public void setMarque(boolean marque) {
+        this.marque = marque;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 
     @Override

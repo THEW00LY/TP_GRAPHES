@@ -13,6 +13,11 @@ import org.insa.graphs.model.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
+
+    public DijkstraAlgorithm(ShortestPathData data) {
+        super(data);
+    }
+
     public boolean isMarque(Label tas, Node node) {
         //vérifier si le cost est infini
         if (tas.cost == Double.POSITIVE_INFINITY) {
@@ -35,6 +40,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         ArrayList<Label> listeLabel = new ArrayList<Label>();
         Graph graph = data.getGraph();
         Node origin = data.getOrigin();
+        Node destination = data.getDestination();
         graph.getNodes().forEach(node -> listeLabel.add(new Label(node)));
 
 
@@ -77,12 +83,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             } 
             // return solution (the shortest path)
         }
-            // Reconstruct the path from the predecessor array
+
         if (listeLabel.get(destination.getId()).cost != Double.POSITIVE_INFINITY) {
             ArrayList<Arc> arcs = new ArrayList<>();
             Node currentNode = destination;
-            while (currentNode != origin) {
-                Arc arc = listeLabel.get(currentNode.getId()).predecessor;
+            while (!currentNode.equals(origin)) {
+                Arc arc = predecessorArcs[currentNode.getId()];
                 arcs.add(arc);
                 currentNode = arc.getOrigin();
             }
