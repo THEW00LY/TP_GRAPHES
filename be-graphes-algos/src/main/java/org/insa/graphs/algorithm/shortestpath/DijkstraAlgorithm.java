@@ -17,21 +17,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
-
-    public boolean isMarque(Label tas, Node node) {
-        //vérifier si le cost est infini
-        if (tas.cost == Double.POSITIVE_INFINITY) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-
-    public void setMarque(Label tas) {
-        tas.marque = true;
-    }
-        
+ 
     @Override
     protected ShortestPathSolution doRun() { 
         final ShortestPathData data = getInputData();
@@ -42,46 +28,48 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Node origin = data.getOrigin();
         Node destination = data.getDestination();
         graph.getNodes().forEach(node -> listeLabel.add(new Label(node)));
+        for(int i = 0; i < listeLabel.size(); i++) {
+            if( i != listeLabel.get(i).sommet_courant.getId())
+                System.out.println(listeLabel.get(i).sommet_courant.getId() + " " + i);
+        }   
+    
 
 
-
-
-        // Initialize array of distances.
-        double[] distances = new double[graph.size()];
-        Arrays.fill(distances, Double.POSITIVE_INFINITY);
-        distances[origin.getId()] = 0;
-
-        // Initialize array of predecessors.
         Arc[] predecessorArcs = new Arc[graph.size()];
         Arrays.fill(predecessorArcs, null);
 
-        // Initialize the binary heap
         BinaryHeap<Label> heap = new BinaryHeap<Label>();
         tas.add(origin);
         listeLabel.get(origin.getId()).cost = 0;
         heap.insert(listeLabel.get(origin.getId()));
 
-        while (!heap.isEmpty()) {
+        while (!heap.isEmpty() && !listeLabel.get(destination.getId()).isMarque()){
 
             Label x = heap.deleteMin();
-            setMarque(x);
+            x.setMarque(true);
+            notifyNodeMarked(x.sommet_courant);
             for (Arc arc : x.sommet_courant.getSuccessors()) {
                 Node y = arc.getDestination();
                 if (!data.isAllowed(arc)) {
                     continue;
                 }
-                if (!isMarque(listeLabel.get(y.getId()), y)) {
-                    double oldDistance = listeLabel.get(y.getId()).cost;
-                    double newDistance = listeLabel.get(x.sommet_courant.getId()).cost + data.getCost(arc);
+                if (!listeLabel.get(y.getId()).isMarque()) {
+                    double oldDistance = listeLabel.get(y.getId()).getCost();
+                    double newDistance = listeLabel.get(x.sommet_courant.getId()).getCost() + data.getCost(arc);
                     if (newDistance < oldDistance) {
-                        listeLabel.get(y.getId()).cost = newDistance;
-                        tas.add(y);
+                        if(oldDistance != Double.POSITIVE_INFINITY) {
+                            heap.remove(listeLabel.get(y.getId()));
+                        }
+                        
+                        listeLabel.get(y.getId()).setCost(newDistance);
+                        notifyNodeReached(y);
                         heap.insert(listeLabel.get(y.getId()));
+                        listeLabel.get(y.getId()).father = x.sommet_courant;
                         predecessorArcs[y.getId()] = arc;
                     }
                 }
             } 
-            // return solution (the shortest path)
+          
         }
 
         if (listeLabel.get(destination.getId()).cost != Double.POSITIVE_INFINITY) {

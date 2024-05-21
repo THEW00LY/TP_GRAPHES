@@ -25,11 +25,11 @@ public class Label implements Comparable<Label> {
     }
 
     public boolean isMarque() {
-        return marque;
+        return this.marque;
     }
 
     public Node getfather() {
-        return father;
+        return this.father;
     }
 
     public void setMarque(boolean marque) {
