@@ -1,33 +1,45 @@
 package org.insa.graphs.algorithm.shortestpath;
 
-public class AStarAlgorithm extends DijkstraAlgorithm {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+import org.insa.graphs.algorithm.AbstractSolution.Status;
+import org.insa.graphs.algorithm.utils.BinaryHeap;
+import org.insa.graphs.model.Arc;
+import org.insa.graphs.model.Graph;
+import org.insa.graphs.model.Node;
+import org.insa.graphs.model.Path;
+
+public class AStarAlgorithm extends ShortestPathAlgorithm {
+
 
     public AStarAlgorithm(ShortestPathData data) {
         super(data);
     }
-
+ 
     @Override
     protected ShortestPathSolution doRun() { 
         final ShortestPathData data = getInputData();
         ShortestPathSolution solution = null;
-        ArrayList<Node> tas = new ArrayList<Node>();
+        ArrayList<Node> file = new ArrayList<Node>();
         ArrayList<Label> listeLabel = new ArrayList<Label>();
+
         Graph graph = data.getGraph();
+        //parcours en profondeur du graphe jusqu'à dépasser 20km
         Node origin = data.getOrigin();
         Node destination = data.getDestination();
         graph.getNodes().forEach(node -> listeLabel.add(new Label(node)));
         for(int i = 0; i < listeLabel.size(); i++) {
             if( i != listeLabel.get(i).sommet_courant.getId())
                 System.out.println(listeLabel.get(i).sommet_courant.getId() + " " + i);
-        }   
-    
-
-
+        }
+        //initialisation du tableau des arcs précédents
         Arc[] predecessorArcs = new Arc[graph.size()];
         Arrays.fill(predecessorArcs, null);
 
         BinaryHeap<Label> heap = new BinaryHeap<Label>();
-        tas.add(origin);
+        file.add(origin);
         listeLabel.get(origin.getId()).cost = 0;
         heap.insert(listeLabel.get(origin.getId()));
 
@@ -57,25 +69,28 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
                     }
                 }
             } 
-          
         }
-
+        //si la destination a été atteinte
         if (listeLabel.get(destination.getId()).cost != Double.POSITIVE_INFINITY) {
             ArrayList<Arc> arcs = new ArrayList<>();
-            Node currentNode = destination;
-            while (!currentNode.equals(origin)) {
-                Arc arc = predecessorArcs[currentNode.getId()];
+            Node current = destination;
+            while (current != origin) {
+                Arc arc = predecessorArcs[current.getId()];
                 arcs.add(arc);
-                currentNode = arc.getOrigin();
+                current = arc.getOrigin();
             }
             Collections.reverse(arcs);
-            Path path = new Path(graph, arcs);
-            solution = new ShortestPathSolution(data, Status.OPTIMAL, path);
-        } else {
-            solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);
+            double totalDistance = listeLabel.get(destination.getId()).cost;
+            if (totalDistance > 20000) {
+                solution = new ShortestPathSolution(data, Status.INFEASIBLE);
+            } else {
+                solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
+            }
         }
-
+        else {
+            solution = new ShortestPathSolution(data, Status.INFEASIBLE);
+        }
         return solution;
-    }
 
+    }
 }
