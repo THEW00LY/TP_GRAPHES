@@ -17,6 +17,14 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
+
+    public ArrayList<Label> Initialisation(Graph graph, Node destination) {
+        ArrayList<Label> listeLabel = new ArrayList<Label>();
+        for (Node node : graph.getNodes()) { 
+            listeLabel.add(new Label(node));
+        }
+        return listeLabel;
+    }
  
     @Override
     protected ShortestPathSolution doRun() { 
@@ -27,7 +35,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Graph graph = data.getGraph();
         Node origin = data.getOrigin();
         Node destination = data.getDestination();
-        graph.getNodes().forEach(node -> listeLabel.add(new Label(node)));
+        listeLabel = Initialisation(graph, destination);
+        //graph.getNodes().forEach(node -> listeLabel.add(new Label(node)));
         for(int i = 0; i < listeLabel.size(); i++) {
             if( i != listeLabel.get(i).sommet_courant.getId())
                 System.out.println(listeLabel.get(i).sommet_courant.getId() + " " + i);
@@ -47,22 +56,22 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
             Label x = heap.deleteMin();
             x.setMarque(true);
-            notifyNodeMarked(x.sommet_courant);
+            //notifyNodeMarked(x.sommet_courant);
             for (Arc arc : x.sommet_courant.getSuccessors()) {
                 Node y = arc.getDestination();
                 if (!data.isAllowed(arc)) {
                     continue;
                 }
                 if (!listeLabel.get(y.getId()).isMarque()) {
-                    double oldDistance = listeLabel.get(y.getId()).getCost();
-                    double newDistance = listeLabel.get(x.sommet_courant.getId()).getCost() + data.getCost(arc);
+                    double oldDistance = listeLabel.get(y.getId()).getTotalCost();
+                    double newDistance = listeLabel.get(x.sommet_courant.getId()).getTotalCost() + data.getCost(arc);
                     if (newDistance < oldDistance) {
                         if(oldDistance != Double.POSITIVE_INFINITY) {
                             heap.remove(listeLabel.get(y.getId()));
                         }
                         
                         listeLabel.get(y.getId()).setCost(newDistance);
-                        notifyNodeReached(y);
+                        //notifyNodeReached(y);
                         heap.insert(listeLabel.get(y.getId()));
                         listeLabel.get(y.getId()).father = x.sommet_courant;
                         predecessorArcs[y.getId()] = arc;

@@ -1,6 +1,5 @@
 package org.insa.graphs.algorithm.shortestpath;
 
-import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Node;
 
 public class Label implements Comparable<Label> {
@@ -42,10 +41,42 @@ public class Label implements Comparable<Label> {
     public void setCost(double cost) {
         this.cost = cost;
     }
-
+    
     @Override
     public int compareTo(Label other) {
         return Double.compare(getTotalCost(), other.cost);
     }
+
+
+    /*
+    @Override
+    public int compareTo(Label a) {
+            int result;
+            if (this.getTotalCost() < a.getTotalCost()){
+                result = -1;
+            }else if (this.getTotalCost()>a.getTotalCost()){
+                result = 1;
+            }else {
+                if(this.getCost() == a.getCost()){
+                    result=0;
+                }
+                else{
+                    if (this.getCost() <a.getCost()){
+                        result = -1;
+                    }
+                    else if(this.getCost() > a.getCost()){
+                        result = 1;
+                    }
+                    else{
+                        result = 0;
+                    }
+
+                }
+                
+            }
+        return result;
+    }
+
+    */
 
 }
