@@ -2,6 +2,7 @@
 package org.insa.graphs.algorithm.shortestpath;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.insa.graphs.algorithm.AbstractSolution.Status;
