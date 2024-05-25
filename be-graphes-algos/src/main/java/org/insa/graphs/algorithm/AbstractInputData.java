@@ -98,4 +98,6 @@ public abstract class AbstractInputData {
         return this.arcInspector.isAllowed(arc);
     }
 
+    
+
 }

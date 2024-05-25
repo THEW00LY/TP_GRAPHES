@@ -2,28 +2,17 @@ package org.insa.graphs.algorithm.shortestpath;
 
 import org.insa.graphs.model.Node;
 
-public class LabelStar extends Label {
-
+public class LabelStar extends Label implements Comparable<Label> {
+    
     private double estimatedCost;
 
-    public LabelStar(Node sommet_courant, Node destination) {
+    public LabelStar(Node sommet_courant, double estimatedCost){
         super(sommet_courant);
-        this.estimatedCost = sommet_courant.getPoint().distanceTo(destination.getPoint());
+        this.estimatedCost = estimatedCost;
     }
-
-    public double getEstimatedCost() {
-        return this.estimatedCost;
-    }
-
-    /*
-    private double calculateEstimatedCost(Node node, Node destination) {
-        return node.getPoint().distanceTo(destination.getPoint());
-    }
-    */
 
     @Override
-    public double getTotalCost() {
+    public double getTotalCost(){
         return this.getCost() + this.estimatedCost;
     }
-
 }

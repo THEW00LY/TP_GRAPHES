@@ -5,23 +5,18 @@ import java.util.ArrayList;
 import org.insa.graphs.model.Graph;
 import org.insa.graphs.model.Node;
 
-
-
 public class AStarAlgorithm extends DijkstraAlgorithm {
 
-
-    public AStarAlgorithm(ShortestPathData data) {
-        super(data);
-        
-    }
-
-    @Override
-    public ArrayList<Label> Initialisation(Graph graph, Node destination) {
-        ArrayList<Label> listeLabel = new ArrayList<Label>();
-        for (Node node : graph.getNodes()) {
-            listeLabel.add(new LabelStar(node, destination));
+	public AStarAlgorithm(ShortestPathData data) {
+		super(data);
+	}
+	
+	@Override
+    public void Initialisation(Graph graph, ShortestPathData data, ArrayList<Label> listeLabel) {
+        for (Node node : graph.getNodes()) { 
+            //System.out.println("distance a vol d'oiseau : " + node.getPoint().distanceTo(data.getDestination().getPoint()));
+            listeLabel.add(new LabelStar(node, 0));
         }
-        return listeLabel;
     }
 
 }
