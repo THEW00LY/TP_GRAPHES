@@ -15,7 +15,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
     public BellmanFordAlgorithm(ShortestPathData data) {
         super(data);
     }
-
+    long startTime = System.nanoTime();
     @Override
     protected ShortestPathSolution doRun() {
 
@@ -31,7 +31,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
         distances[data.getOrigin().getId()] = 0;
 
         // Notify observers about the first event (origin processed).
-        notifyOriginProcessed(data.getOrigin());
+        //notifyOriginProcessed(data.getOrigin());
 
         // Initialize array of predecessors.
         Arc[] predecessorArcs = new Arc[nbNodes];
@@ -55,7 +55,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
                     double newDistance = distances[node.getId()] + w;
 
                     if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
-                        notifyNodeReached(arc.getDestination());
+                        //notifyNodeReached(arc.getDestination());
                     }
 
                     // Check if new distances would be better, if so update...
@@ -77,7 +77,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
         else {
 
             // The destination has been found, notify the observers.
-            notifyDestinationReached(data.getDestination());
+            //notifyDestinationReached(data.getDestination());
 
             // Create the path from the array of predecessors...
             ArrayList<Arc> arcs = new ArrayList<>();
@@ -93,7 +93,9 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
             // Create the final solution.
             solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
         }
-
+        long endTime = System.nanoTime();
+        double duration = (endTime - startTime) / 1_000_000_000.0; // convertir en secondes
+        System.out.println("Temps d'exécution de BellmanFord: " + duration + " s");
         return solution;
     }
 

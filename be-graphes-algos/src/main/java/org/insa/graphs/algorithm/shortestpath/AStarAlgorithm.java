@@ -15,7 +15,7 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
     public void Initialisation(Graph graph, ShortestPathData data, ArrayList<Label> listeLabel) {
         for (Node node : graph.getNodes()) { 
             //System.out.println("distance a vol d'oiseau : " + node.getPoint().distanceTo(data.getDestination().getPoint()));
-            listeLabel.add(new LabelStar(node, 0));
+            listeLabel.add(new LabelStar(node, node.getPoint().distanceTo(data.getDestination().getPoint())));
         }
     }
 

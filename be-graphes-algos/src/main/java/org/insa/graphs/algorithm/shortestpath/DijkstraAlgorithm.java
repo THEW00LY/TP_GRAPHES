@@ -2,6 +2,7 @@
 package org.insa.graphs.algorithm.shortestpath;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.insa.graphs.algorithm.AbstractSolution.Status;
@@ -19,13 +20,15 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     }
 
     public void Initialisation(Graph graph, ShortestPathData data, ArrayList<Label> listeLabel) {
-        for (Node node : graph.getNodes()) { 
+        for (Node node : graph.getNodes()) {
             listeLabel.add(new Label(node));
         }
     }
-
+    
+    long startTime = System.nanoTime();
+    
     @Override
-    protected ShortestPathSolution doRun() { 
+    protected ShortestPathSolution doRun() {
         final ShortestPathData data = getInputData();
         ShortestPathSolution solution = null;
         ArrayList<Node> ListeNode = new ArrayList<Node>();
@@ -38,10 +41,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         for(int i = 0; i < listeLabel.size(); i++) {
             if( i != listeLabel.get(i).sommet_courant.getId())
                 System.out.println(listeLabel.get(i).sommet_courant.getId() + " " + i);
-        }   
+        }
     
-
-
         Arc[] predecessorArcs = new Arc[graph.size()];
         Arrays.fill(predecessorArcs, null);
 
@@ -62,8 +63,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 }
                 if (!listeLabel.get(y.getId()).isMarque()) { // Si le sommet n'est pas marqué
                     double oldDistance = listeLabel.get(y.getId()).getTotalCost(); // On récupère la distance actuelle
-                    double newDistance = listeLabel.get(x.sommet_courant.getId()).getTotalCost() + data.getCost(arc); // On calcule la nouvelle distance                
-                    if (newDistance < oldDistance) { // Si la nouvelle distance est plus petite
+                    double newDistance = listeLabel.get(x.sommet_courant.getId()).getCost() + data.getCost(arc); // On calcule la nouvelle distance
+                    double Comparedistance = listeLabel.get(y.getId()).getTotalCost() - listeLabel.get(y.getId()).getCost();
+                    if (newDistance < oldDistance && Comparedistance == 0) { // Si la nouvelle distance est plus petite
                         if(oldDistance != Double.POSITIVE_INFINITY) { // Si la distance est infinie, on ne l'enlève pas du tas
                             heap.remove(listeLabel.get(y.getId())); 
                         }
@@ -73,10 +75,21 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                         heap.insert(listeLabel.get(y.getId())); // On ajoute le sommet au tas
                         listeLabel.get(y.getId()).father = x.sommet_courant; // On met à jour le père
                         predecessorArcs[y.getId()] = arc; // On met à jour l'arc
+                    } else if (newDistance + y.getPoint().distanceTo(data.getDestination().getPoint()) < oldDistance) { // Si la nouvelle distance est plus petite
+                        if(oldDistance != Double.POSITIVE_INFINITY) { // Si la distance est infinie, on ne l'enlève pas du tas
+                            heap.remove(listeLabel.get(y.getId()));
+                        }
+                        
+                        listeLabel.get(y.getId()).setCost(newDistance); // On met à jour la distance
+                        notifyNodeReached(y);
+                        heap.insert(listeLabel.get(y.getId())); // On ajoute le sommet au tas
+                        listeLabel.get(y.getId()).father = x.sommet_courant; // On met à jour le père
+                        predecessorArcs[y.getId()] = arc; // On met à jour l'arc{
+
                     }
                 }
-            } 
-          
+            }
+
         }
 
         if (listeLabel.get(destination.getId()).cost != Double.POSITIVE_INFINITY) {
@@ -93,7 +106,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         } else {
             solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);
         }
-
+        long endTime = System.nanoTime();
+        double time = (endTime - startTime) / 1_000_000_000.0;
+        System.out.println("Time taken: " + time + " s");
         return solution;
     }
 }
