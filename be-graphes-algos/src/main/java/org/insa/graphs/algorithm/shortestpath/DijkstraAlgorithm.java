@@ -77,7 +77,11 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                         predecessorArcs[y.getId()] = arc; // On met à jour l'arc
                     } else if (newDistance + y.getPoint().distanceTo(data.getDestination().getPoint()) < oldDistance) { // Si la nouvelle distance est plus petite
                         if(oldDistance != Double.POSITIVE_INFINITY) { // Si la distance est infinie, on ne l'enlève pas du tas
+<<<<<<< HEAD
                             heap.remove(listeLabel.get(y.getId()));
+=======
+                            heap.remove(listeLabel.get(y.getId())); 
+>>>>>>> 8d2a99a3d86763989e034e2069c05e6119a33718
                         }
                         
                         listeLabel.get(y.getId()).setCost(newDistance); // On met à jour la distance
