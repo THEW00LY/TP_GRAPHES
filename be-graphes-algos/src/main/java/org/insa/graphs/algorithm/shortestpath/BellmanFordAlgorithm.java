@@ -95,7 +95,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
         }
         long endTime = System.nanoTime();
         double duration = (endTime - startTime) / 1_000_000_000.0; // convertir en secondes
-        System.out.println("Temps d'exécution de BellmanFord: " + duration + " s");
+        System.out.println("Temps d'exÃ©cution de BellmanFord: " + duration + " s");
         return solution;
     }
 
