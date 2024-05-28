@@ -30,33 +30,36 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     protected ShortestPathSolution doRun() {
         final ShortestPathData data = getInputData();
         ShortestPathSolution solution = null;
-        ArrayList<Node> ListeNode = new ArrayList<Node>();
-        ArrayList<Label> listeLabel = new ArrayList<Label>();
-        Graph graph = data.getGraph();
-        Node origin = data.getOrigin();
-        Node destination = data.getDestination();
-    Initialisation(graph, data, listeLabel);
-        //graph.getNodes().forEach(node -> listeLabel.add(new Label(node)));
-        for(int i = 0; i < listeLabel.size(); i++) {
+
+        ArrayList<Node> ListeNode = new ArrayList<Node>(); // Liste des sommets
+        ArrayList<Label> listeLabel = new ArrayList<Label>(); // Liste des labels
+        Graph graph = data.getGraph(); // On récupère le graphe
+        Node origin = data.getOrigin(); // On récupère le sommet d'origine
+        Node destination = data.getDestination(); // On récupère le sommet de destination
+    Initialisation(graph, data, listeLabel); // On initialise les labels
+
+        //graph.getNodes().forEach(node -> listeLabel.add(new Label(node))); //ancienne version
+
+        for(int i = 0; i < listeLabel.size(); i++) { // On vérifie que les labels sont bien associés aux sommets
             if( i != listeLabel.get(i).sommet_courant.getId())
-                System.out.println(listeLabel.get(i).sommet_courant.getId() + " " + i);
+                System.out.println(listeLabel.get(i).sommet_courant.getId() + " " + i); 
         }
     
-        Arc[] predecessorArcs = new Arc[graph.size()];
-        Arrays.fill(predecessorArcs, null);
+        Arc[] predecessorArcs = new Arc[graph.size()];  // Tableau des arcs précédents
+        Arrays.fill(predecessorArcs, null); // On remplit le tableau de null
 
-        BinaryHeap<Label> heap = new BinaryHeap<Label>();
-        ListeNode.add(origin);
-        listeLabel.get(origin.getId()).cost = 0;
-        heap.insert(listeLabel.get(origin.getId()));
+        BinaryHeap<Label> heap = new BinaryHeap<Label>(); // Tas binaire
+        ListeNode.add(origin); // On ajoute le sommet d'origine à la liste
+        listeLabel.get(origin.getId()).cost = 0; // On met la distance à 0
+        heap.insert(listeLabel.get(origin.getId())); // On ajoute le sommet au tas
 
-        while (!heap.isEmpty() && !listeLabel.get(destination.getId()).isMarque()){
+        while (!heap.isEmpty() && !listeLabel.get(destination.getId()).isMarque()){ // Tant que le tas n'est pas vide et que le sommet de destination n'est pas marqué
 
             Label x = heap.deleteMin(); // On retire le sommet de la liste
             x.setMarque(true); // On le marque
-            notifyNodeMarked(x.sommet_courant);
+            notifyNodeMarked(x.sommet_courant); // On notifie que le sommet est marqué
             for (Arc arc : x.sommet_courant.getSuccessors()) { // On parcourt les successeurs
-                Node y = arc.getDestination();
+                Node y = arc.getDestination(); // On récupère le sommet de destination
                 if (!data.isAllowed(arc)) { // On vérifie si l'arc est dispo
                     continue;
                 }
@@ -66,11 +69,11 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                     double Comparedistance = listeLabel.get(y.getId()).getTotalCost() - listeLabel.get(y.getId()).getCost();
                     if (newDistance < oldDistance && Comparedistance == 0) { // Si la nouvelle distance est plus petite
                         if(oldDistance != Double.POSITIVE_INFINITY) { // Si la distance est infinie, on ne l'enlève pas du tas
-                            heap.remove(listeLabel.get(y.getId())); 
+                            heap.remove(listeLabel.get(y.getId()));  // On retire le sommet du tas
                         }
                         
                         listeLabel.get(y.getId()).setCost(newDistance); // On met à jour la distance
-                        notifyNodeReached(y);
+                        notifyNodeReached(y); // On notifie que le sommet est atteint
                         heap.insert(listeLabel.get(y.getId())); // On ajoute le sommet au tas
                         listeLabel.get(y.getId()).father = x.sommet_courant; // On met à jour le père
                         predecessorArcs[y.getId()] = arc; // On met à jour l'arc
@@ -80,7 +83,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                         }
                         
                         listeLabel.get(y.getId()).setCost(newDistance); // On met à jour la distance
-                        notifyNodeReached(y);
+                        notifyNodeReached(y); 
                         heap.insert(listeLabel.get(y.getId())); // On ajoute le sommet au tas
                         listeLabel.get(y.getId()).father = x.sommet_courant; // On met à jour le père
                         predecessorArcs[y.getId()] = arc; // On met à jour l'arc{
@@ -107,7 +110,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         long endTime = System.nanoTime();
         double time = (endTime - startTime) / 1_000_000_000.0;
-        System.out.println("Time taken: " + time + " s");
+        System.out.println("Time taken: " + this.getClass().getSimpleName() +" :  "+ time + " s");
         return solution;
     }
 }
